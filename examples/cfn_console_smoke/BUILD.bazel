@@ -1,0 +1,73 @@
+"""End-to-end smoke target wiring rules_cloudformation's
+`cloudformation_stack` (+ a `cloudformation_parameter`) to
+rules_aws_workflows's `cloudformation_up_interactive`.
+
+A trivial CFN template — one S3 bucket whose name is taken from a
+required Parameter — exercises:
+  - rules_cloudformation v0.7.0's new `Parameter` block,
+  - cfn_console reading the rendered template + building a
+    PromptPanel from the Parameter,
+  - meridian_tui::render_prompt collecting the user's typed value,
+  - cfn_console driving the change-set lifecycle against real AWS.
+
+Run interactively:
+
+  bazel run //examples/cfn_console_smoke:smoke_up_i
+
+…and answer the prompt for `BucketName`. Use `:smoke_down` to tear
+down (delegates to `cloudformation_down` in rules_cloudformation).
+"""
+
+load(
+    "@rules_aws_workflows//aws/cloudformation:defs.bzl",
+    "cloudformation_up_interactive",
+)
+load(
+    "@rules_cloudformation//cloudformation:defs.bzl",
+    "cloudformation_aws_s3_bucket",
+)
+load("@rules_cloudformation//cloudformation:deploy.bzl", "cloudformation_down")
+load("@rules_cloudformation//cloudformation:parameter.bzl", "cloudformation_parameter")
+load(
+    "@rules_cloudformation//cloudformation:stack.bzl",
+    "cfn_ref",
+    "cloudformation_stack",
+)
+
+package(default_visibility = ["//visibility:public"])
+
+cloudformation_parameter(
+    name = "BucketName",
+    Type = "String",
+    Description = "Globally-unique S3 bucket name. Lowercase letters, digits, dashes.",
+    AllowedPattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$",
+    ConstraintDescription = "S3 bucket names: 3-63 chars, lowercase/digits/dashes, no leading/trailing dash.",
+    MinLength = "3",
+    MaxLength = "63",
+)
+
+cloudformation_aws_s3_bucket(
+    name = "Bucket",
+    aws_s3_bucket_name = "smoke-bucket",
+    BucketName = cfn_ref("BucketName"),
+)
+
+cloudformation_stack(
+    name = "smoke",
+    description = "cfn_console smoke: one S3 bucket whose name comes from a Parameter the operator types at the prompt.",
+    parameters = [":BucketName"],
+    resources = [":Bucket"],
+)
+
+cloudformation_up_interactive(
+    name = "smoke_up_i",
+    stack = ":smoke",
+    stack_name = "cfn-console-smoke",
+    region = "us-east-1",
+)
+
+cloudformation_down(
+    name = "smoke_down",
+    stack_name = "cfn-console-smoke",
+    region = "us-east-1",
+)

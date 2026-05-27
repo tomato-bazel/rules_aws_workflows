@@ -1,0 +1,35 @@
+"""//cfn_console — interactive CloudFormation deploy driver.
+
+`bazel run //cfn_console:cfn_console -- --template <path> --stack-name <s> --region <r>`
+runs the binary directly. Most consumers will invoke it via the
+`cloudformation_up_interactive` rule in //aws/cloudformation
+which wraps a `cloudformation_stack` target's rendered template.
+"""
+
+load("@rules_rust//rust:defs.bzl", "rust_binary")
+
+package(default_visibility = ["//visibility:public"])
+
+exports_files([
+    "Cargo.toml",
+    "Cargo.lock",
+])
+
+rust_binary(
+    name = "cfn_console",
+    srcs = ["src/main.rs"],
+    edition = "2021",
+    deps = [
+        "@crates//:anyhow",
+        "@crates//:aws-config",
+        "@crates//:aws-sdk-cloudformation",
+        "@crates//:clap",
+        "@crates//:prost",
+        "@crates//:serde",
+        "@crates//:serde_json",
+        "@crates//:thiserror",
+        "@crates//:tokio",
+        "@meridian//rust/tui",
+        "@meridian//rust/uiview",
+    ],
+)

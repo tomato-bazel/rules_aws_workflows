@@ -1,0 +1,27 @@
+[package]
+name = "cfn-console"
+version = "0.0.1"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+description = "Hermetic interactive CloudFormation deploy driver. Reads a rendered CFN template, prompts for Parameter values via meridian, runs the change-set lifecycle, and tails stack events."
+
+[[bin]]
+name = "cfn_console"
+path = "src/main.rs"
+
+# Bazel is the authoritative build. cargo-side this manifest is
+# used by crate_universe to vendor the third-party crates listed
+# below; meridian deps come in via @meridian//... at the BUILD
+# level, NOT through cargo (they live in a sibling workspace, so
+# a `path = ".."` dep would only work for local cargo runs and
+# the crate_universe splice fails on the absolute path).
+[dependencies]
+aws-config = { version = "1", features = ["behavior-version-latest"] }
+aws-sdk-cloudformation = { version = "1", features = ["behavior-version-latest"] }
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "time"] }
+clap = { version = "4", features = ["derive"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+anyhow = "1"
+prost = "0.13"
