@@ -53,15 +53,8 @@ use_repo(crate, "crates")
 # meridian — proto-driven UI framework. cfn_console builds a
 # PromptPanel for CFN Parameters + a confirmation panel for the
 # change-set diff and hands them to meridian_tui::render_prompt.
-#
-# Local-path during development so iterating on meridian's protocol
-# doesn't require a registry bump per round. Flip to a pinned
-# `version = "x.y.z"` once both are stable.
-bazel_dep(name = "meridian", version = "0.1.0")
-local_path_override(
-    module_name = "meridian",
-    path = "../meridian",
-)
+# Lives in the premium registry; the .bazelrc already pins it.
+bazel_dep(name = "meridian", version = "0.2.0")
 
 # rules_cloudformation — for downstream consumers pairing
 # `cloudformation_stack` (over there) with
@@ -69,10 +62,6 @@ local_path_override(
 # of the rule itself; the `bazel_dep` makes the integration
 # discoverable from this repo's MODULE graph.
 bazel_dep(name = "rules_cloudformation", version = "0.7.0")
-local_path_override(
-    module_name = "rules_cloudformation",
-    path = "../rules_cloudformation",
-)
 
 # Dev-only.
 bazel_dep(name = "stardoc", version = "0.7.2", dev_dependency = True)
