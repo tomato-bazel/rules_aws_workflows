@@ -1,5 +1,3 @@
-common --enable_bzlmod
-
 # Needed because this module and our `meridian` dep both define a
 # `@crates` universe via `use_extension`. The isolated form
 # disambiguates them — see MODULE.bazel.
@@ -8,17 +6,7 @@ common --experimental_isolated_extension_usages
 # Premium registry first — meridian only lives there. Public
 # fastverk registry second (for rules_cloudformation, etc.). BCR
 # last as fallback.
-common --registry=https://raw.githubusercontent.com/fastverk/bazel-registry-premium/main/
-common --registry=https://raw.githubusercontent.com/fastverk/bazel-registry/main/
-common --registry=https://bcr.bazel.build/
 
 # Forward `gh auth token` as a Bearer header for github.com fetches
 # (private meridian + private fastverk-org tarballs from the premium
 # registry). Without this, `bazel build` 404s on the private repos.
-common --credential_helper=*.github.com=%workspace%/tools/credhelper/gh-cred-helper.sh
-common --credential_helper=github.com=%workspace%/tools/credhelper/gh-cred-helper.sh
-common --credential_helper=raw.githubusercontent.com=%workspace%/tools/credhelper/gh-cred-helper.sh
-common --credential_helper=codeload.github.com=%workspace%/tools/credhelper/gh-cred-helper.sh
-
-test --test_output=errors
-test --test_summary=terse
