@@ -1,6 +1,6 @@
 """End-to-end smoke target wiring rules_cloudformation's
 `cloudformation_stack` (+ a `cloudformation_parameter`) to
-rules_aws_workflows's `cloudformation_up_interactive`.
+rules_cloudformation's `cloudformation_up_interactive`.
 
 A trivial CFN template — one S3 bucket whose name is taken from a
 required Parameter — exercises:
@@ -19,7 +19,7 @@ down (delegates to `cloudformation_down` in rules_cloudformation).
 """
 
 load(
-    "@rules_aws_workflows//aws/cloudformation:defs.bzl",
+    "@rules_cloudformation//cloudformation:interactive.bzl",
     "cloudformation_up_interactive",
 )
 load(
@@ -64,6 +64,7 @@ cloudformation_up_interactive(
     stack = ":smoke",
     stack_name = "cfn-console-smoke",
     region = "us-east-1",
+    cfn_console = "@rules_aws_workflows//cfn_console:cfn_console",
 )
 
 cloudformation_down(
