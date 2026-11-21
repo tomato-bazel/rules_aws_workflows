@@ -38,8 +38,12 @@ def _cloudformation_up_interactive_impl(ctx):
     template = template_files[0]
     cfn_console = ctx.executable._cfn_console
     stack_name = ctx.attr.stack_name or ctx.label.name
-    args = ["--template", "${{RUNFILES_DIR}}/{}".format(template.short_path),
-            "--stack-name", stack_name]
+    args = [
+        "--template",
+        "${{RUNFILES_DIR}}/{}".format(template.short_path),
+        "--stack-name",
+        stack_name,
+    ]
     if ctx.attr.region:
         args += ["--region", ctx.attr.region]
     for cap in ctx.attr.capabilities:

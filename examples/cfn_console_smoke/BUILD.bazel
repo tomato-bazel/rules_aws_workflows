@@ -1,6 +1,6 @@
 """End-to-end smoke target wiring rules_cloudformation's
 `cloudformation_stack` (+ a `cloudformation_parameter`) to
-rules_cloudformation's `cloudformation_up_interactive`.
+rules_aws_workflows' `cloudformation_up_interactive`.
 
 A trivial CFN template — one S3 bucket whose name is taken from a
 required Parameter — exercises:
@@ -19,10 +19,6 @@ down (delegates to `cloudformation_down` in rules_cloudformation).
 """
 
 load(
-    "@rules_cloudformation//cloudformation:interactive.bzl",
-    "cloudformation_up_interactive",
-)
-load(
     "@rules_cloudformation//cloudformation:defs.bzl",
     "cloudformation_aws_s3_bucket",
 )
@@ -33,23 +29,27 @@ load(
     "cfn_ref",
     "cloudformation_stack",
 )
+load(
+    "//aws/cloudformation:defs.bzl",
+    "cloudformation_up_interactive",
+)
 
 package(default_visibility = ["//visibility:public"])
 
 cloudformation_parameter(
     name = "BucketName",
-    Type = "String",
-    Description = "Globally-unique S3 bucket name. Lowercase letters, digits, dashes.",
     AllowedPattern = "^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$",
     ConstraintDescription = "S3 bucket names: 3-63 chars, lowercase/digits/dashes, no leading/trailing dash.",
-    MinLength = "3",
+    Description = "Globally-unique S3 bucket name. Lowercase letters, digits, dashes.",
     MaxLength = "63",
+    MinLength = "3",
+    Type = "String",
 )
 
 cloudformation_aws_s3_bucket(
     name = "Bucket",
-    aws_s3_bucket_name = "smoke-bucket",
     BucketName = cfn_ref("BucketName"),
+    aws_s3_bucket_name = "smoke-bucket",
 )
 
 cloudformation_stack(
@@ -61,14 +61,13 @@ cloudformation_stack(
 
 cloudformation_up_interactive(
     name = "smoke_up_i",
+    region = "us-east-1",
     stack = ":smoke",
     stack_name = "cfn-console-smoke",
-    region = "us-east-1",
-    cfn_console = "@rules_aws_workflows//cfn_console:cfn_console",
 )
 
 cloudformation_down(
     name = "smoke_down",
-    stack_name = "cfn-console-smoke",
     region = "us-east-1",
+    stack_name = "cfn-console-smoke",
 )

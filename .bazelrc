@@ -1,12 +1,12 @@
-# Needed because this module and our `meridian` dep both define a
-# `@crates` universe via `use_extension`. The isolated form
-# disambiguates them — see MODULE.bazel.
+# Resolve the public rules registry before the Bazel Central Registry.
+common --registry=https://registry.tbzl.dev/
+common --registry=https://bcr.bazel.build/
+
+# This module and the `meridian` dep both define a `@crates` universe via
+# `use_extension`. The isolated form disambiguates them — see MODULE.bazel.
 common --experimental_isolated_extension_usages
 
-# Premium registry first — meridian only lives there. Public
-# fastverk registry second (for rules_cloudformation, etc.). BCR
-# last as fallback.
-
-# Forward `gh auth token` as a Bearer header for github.com fetches
-# (private meridian + private fastverk-org tarballs from the premium
-# registry). Without this, `bazel build` 404s on the private repos.
+# Protobuf's build-time upb generator uses linker section registration.
+# Preserve those sections with Zig's Linux linker when building host tools.
+common --enable_platform_specific_config
+build:linux --host_linkopt=-Wl,--no-gc-sections
