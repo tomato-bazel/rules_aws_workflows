@@ -12,8 +12,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test:
-    name: bazel test //...
+  build:
+    name: bazel build //...
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -26,6 +26,8 @@ jobs:
           bazelisk-cache: true
           disk-cache: ${{ github.workflow }}-${{ matrix.os }}
           repository-cache: true
+      - run: bazel build //...
+      # The only test target today is the stardoc freshness check.
       - run: bazel test //... --test_output=errors
 
   buildifier:
