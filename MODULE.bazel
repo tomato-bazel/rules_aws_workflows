@@ -13,7 +13,7 @@
 #     to a specific `cloudformation_stack` target.
 module(
     name = "rules_aws_workflows",
-    version = "0.1.1",
+    version = "0.2.0",
 )
 
 bazel_dep(name = "platforms", version = "1.0.0")
