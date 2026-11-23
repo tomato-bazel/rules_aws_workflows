@@ -13,7 +13,7 @@
 #     to a specific `cloudformation_stack` target.
 module(
     name = "rules_aws_workflows",
-    version = "0.2.0",
+    version = "0.2.1",
 )
 
 bazel_dep(name = "platforms", version = "1.0.0")
@@ -59,10 +59,14 @@ crate = use_extension(
     "crate",
     isolate = True,
 )
+
+# No crate_universe `lockfile`: its digest is computed from labels that differ
+# when this module is a dependency rather than the root, so a pinned
+# cargo-bazel-lock.json fails every downstream consumer with "Digests do not
+# match". Crate versions stay pinned by Cargo.lock.
 crate.from_cargo(
     name = "crates",
     cargo_lockfile = "//cfn_console:Cargo.lock",
-    lockfile = "//cfn_console:cargo-bazel-lock.json",
     manifests = ["//cfn_console:Cargo.toml"],
 )
 use_repo(crate, "crates")

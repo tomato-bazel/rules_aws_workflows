@@ -4,6 +4,16 @@ All notable changes to rules_aws_workflows. The format is loosely
 [Keep a Changelog](https://keepachangelog.com/); version headers mirror
 the published registry entries.
 
+## 0.2.1
+
+### Fixed
+
+- The module can now be consumed as a dependency. `crate.from_cargo` no
+  longer passes a crate_universe `lockfile`, whose digest never matches
+  outside the root module, so every consumer failed with "Digests do not
+  match … lockfile is out of date for 'crates'". Crate versions remain
+  pinned by `cfn_console/Cargo.lock`; `cargo-bazel-lock.json` is removed.
+
 ## 0.2.0
 
 ### Changed
