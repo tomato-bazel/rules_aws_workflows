@@ -31,7 +31,7 @@ common --experimental_isolated_extension_usages
 `MODULE.bazel`:
 
 ```starlark
-bazel_dep(name = "rules_aws_workflows", version = "0.2.1")
+bazel_dep(name = "rules_aws_workflows", version = "0.2.2")
 bazel_dep(name = "rules_cloudformation", version = "0.10.1")
 ```
 

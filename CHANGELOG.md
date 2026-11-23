@@ -4,6 +4,19 @@ All notable changes to rules_aws_workflows. The format is loosely
 [Keep a Changelog](https://keepachangelog.com/); version headers mirror
 the published registry entries.
 
+## 0.2.2
+
+### Changed
+
+- The pinned Rust toolchain (1.95.0) is now registered as a dev dependency
+  only. It no longer propagates to consumers, which resolve their own Rust
+  toolchain or rules_rust's default.
+- The crate_universe repo is named `aws_workflows_crates`, mapped to `@crates`
+  inside this module. A generic `crates` name on the shared extension could
+  collide with a consumer's own.
+
+Both changes satisfy the tomato-bazel registry admission gate (D2, D3).
+
 ## 0.2.1
 
 ### Fixed
